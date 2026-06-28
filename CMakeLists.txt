@@ -71,16 +71,7 @@ endif()
 if(WITH_SIMPLESCREENRECORDER)
 
 	add_subdirectory(src)
-	add_subdirectory(src/translations)
 
-	if(WITH_OPENGL_RECORDING)
-		# the 'ssr-glinject' script is installed together with the main SSR executable to avoid problems with multiarch packages
-		install(
-			FILES scripts/ssr-glinject
-			DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
-			PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-		)
-	endif()
 	install(
 		DIRECTORY data/output-profiles
 		DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/simplescreenrecorder

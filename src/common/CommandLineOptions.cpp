@@ -39,23 +39,7 @@ void PrintOptionHelp() {
 		"                        be updated continuously and deleted when the recording\n"
 		"                        page is closed.\n"
 		"  --no-redirect-stderr  Don't redirect stderr to the log.\n"
-		"  --no-systray          Don't show the system tray icon.\n"
-		"  --start-hidden        Start the application in hidden form.\n"
-		"  --start-recording     Start the recording immediately.\n"
-		"  --activate-schedule   Activate the recording schedule immediately.\n"
-		"  --syncdiagram         Show synchronization diagram (for debugging).\n"
-		"  --benchmark           Run the internal benchmark.\n"
-		"\n"
-		"Commands accepted through stdin:\n"
-		"  record-start          Start the recording.\n"
-		"  record-pause          Pause the recording.\n"
-		"  record-cancel         Cancel the recording and delete the output file.\n"
-		"  record-save           Finish the recording and save the output file.\n"
-		"  schedule-activate     Activate the recording schedule.\n"
-		"  schedule-deactivate   Deactivate the recording schedule.\n"
-		"  window-show           Show the application window.\n"
-		"  window-hide           Hide the application window.\n"
-		"  quit                  Quit the application.\n"
+
 	);
 }
 
@@ -109,12 +93,6 @@ CommandLineOptions::CommandLineOptions() {
 	m_log_file = QString();
 	m_stats_file = QString();
 	m_redirect_stderr = true;
-	m_systray = true;
-	m_start_hidden = false;
-	m_start_recording = false;
-	m_activate_schedule = false;
-	m_sync_diagram = false;
-	m_benchmark = false;
 	m_gui = true;
 
 	s_instance = this;
@@ -172,25 +150,6 @@ void CommandLineOptions::Parse() {
 			} else if(option == "--no-redirect-stderr") {
 				CheckOptionHasNoValue(option, value);
 				m_redirect_stderr = false;
-			} else if(option == "--no-systray") {
-				CheckOptionHasNoValue(option, value);
-				m_systray = false;
-			} else if(option == "--start-hidden") {
-				CheckOptionHasNoValue(option, value);
-				m_start_hidden = true;
-			} else if(option == "--start-recording") {
-				CheckOptionHasNoValue(option, value);
-				m_start_recording = true;
-			} else if(option == "--activate-schedule") {
-				CheckOptionHasNoValue(option, value);
-				m_activate_schedule = true;
-			} else if(option == "--syncdiagram") {
-				CheckOptionHasNoValue(option, value);
-				m_sync_diagram = true;
-			} else if(option == "--benchmark") {
-				CheckOptionHasNoValue(option, value);
-				m_benchmark = true;
-				m_gui = false;
 			} else {
 				Logger::LogError("[CommandLineOptions::Parse] " + Logger::tr("Error: Unknown command-line option '%1'!").arg(option));
 				PrintOptionHelp();

@@ -34,12 +34,6 @@ private:
 	QString m_log_file;
 	QString m_stats_file;
 	bool m_redirect_stderr;
-	bool m_systray;
-	bool m_start_hidden;
-	bool m_start_recording;
-	bool m_activate_schedule;
-	bool m_sync_diagram;
-	bool m_benchmark;
 	bool m_gui;
 
 	static CommandLineOptions *s_instance;
@@ -56,12 +50,6 @@ public:
 	inline static const QString& GetLogFile() { return GetInstance()->m_log_file; }
 	inline static const QString& GetStatsFile() { return GetInstance()->m_stats_file; }
 	inline static bool GetRedirectStderr() { return GetInstance()->m_redirect_stderr; }
-	inline static bool GetSysTray() { return GetInstance()->m_systray; }
-	inline static bool GetStartHidden() { return GetInstance()->m_start_hidden; }
-	inline static bool GetStartRecording() { return GetInstance()->m_start_recording; }
-	inline static bool GetActivateSchedule() { return GetInstance()->m_activate_schedule; }
-	inline static bool GetSyncDiagram() { return GetInstance()->m_sync_diagram; }
-	inline static bool GetBenchmark() { return GetInstance()->m_benchmark; }
 	inline static bool GetGui() { return GetInstance()->m_gui; }
 
 };

@@ -26,7 +26,6 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 #include "VideoEncoder.h"
 #include "AudioEncoder.h"
 #include "SampleCast.h"
-#include "SyncDiagram.h"
 #include <libavutil/channel_layout.h>
 
 // The amount of filtering applied to audio timestamps to reduce noise. Higher values reduce timestamp noise (and associated drift correction),
@@ -256,16 +255,6 @@ void Synchronizer::Init() {
 		audiolock->m_warn_desync = true;
 	}
 
-	// create sync diagram
-	if(CommandLineOptions::GetSyncDiagram()) {
-		m_sync_diagram.reset(new SyncDiagram(4));
-		m_sync_diagram->SetChannelName(0, SyncDiagram::tr("Video in"));
-		m_sync_diagram->SetChannelName(1, SyncDiagram::tr("Audio in"));
-		m_sync_diagram->SetChannelName(2, SyncDiagram::tr("Video out"));
-		m_sync_diagram->SetChannelName(3, SyncDiagram::tr("Audio out"));
-		m_sync_diagram->show();
-	}
-
 	// initialize shared data
 	{
 		SharedLock lock(&m_shared_data);
@@ -320,10 +309,6 @@ int64_t Synchronizer::GetNextVideoTimestamp() {
 
 void Synchronizer::ReadVideoFrame(unsigned int width, unsigned int height, const uint8_t* const* data, const int* stride, AVPixelFormat format, int colorspace, int64_t timestamp) {
 	assert(m_output_format->m_video_enabled);
-
-	// add new block to sync diagram
-	if(m_sync_diagram != NULL)
-		m_sync_diagram->AddBlock(0, (double) timestamp * 1.0e-6, (double) timestamp * 1.0e-6 + 1.0 / (double) m_output_format->m_video_frame_rate, QColor(255, 0, 0));
 
 	VideoLock videolock(&m_video_data);
 
@@ -404,10 +389,6 @@ void Synchronizer::ReadAudioSamples(unsigned int channels, unsigned int sample_r
 	// sanity check
 	if(sample_count == 0)
 		return;
-
-	// add new block to sync diagram
-	if(m_sync_diagram != NULL)
-		m_sync_diagram->AddBlock(1, (double) timestamp * 1.0e-6, (double) timestamp * 1.0e-6 + (double) sample_count / (double) sample_rate, QColor(0, 255, 0));
 
 	AudioLock audiolock(&m_audio_data);
 
@@ -721,12 +702,6 @@ void Synchronizer::FlushVideoBuffer(Synchronizer::SharedData* lock, int64_t segm
 				std::unique_ptr<AVFrameWrapper> duplicate_frame = CreateVideoFrame(m_output_format->m_video_width, m_output_format->m_video_height, m_output_format->m_video_pixel_format, lock->m_last_video_frame_data);
 				duplicate_frame->GetFrame()->pts = lock->m_video_pts + m_max_frames_skipped;
 
-				// add new block to sync diagram
-				if(m_sync_diagram != NULL) {
-					double t = (double) duplicate_frame->GetFrame()->pts / (double) m_output_format->m_video_frame_rate;
-					m_sync_diagram->AddBlock(2, t, t + 1.0 / (double) m_output_format->m_video_frame_rate, QColor(255, 196, 0));
-				}
-
 				// send the frame to the encoder
 				lock->m_segment_video_accumulated_delay = std::max((int64_t) 0, lock->m_segment_video_accumulated_delay - m_max_frames_skipped * delay_time_per_frame);
 				lock->m_video_pts = duplicate_frame->GetFrame()->pts + 1;
@@ -756,12 +731,6 @@ void Synchronizer::FlushVideoBuffer(Synchronizer::SharedData* lock, int64_t segm
 		// if this is the first video frame, always set the pts to zero
 		if(lock->m_video_pts == 0)
 			frame->GetFrame()->pts = 0;
-
-		// add new block to sync diagram
-		if(m_sync_diagram != NULL) {
-			double t = (double) frame->GetFrame()->pts / (double) m_output_format->m_video_frame_rate;
-			m_sync_diagram->AddBlock(2, t, t + 1.0 / (double) m_output_format->m_video_frame_rate, QColor(255, 0, 0));
-		}
 
 		// send the frame to the encoder
 		lock->m_segment_video_accumulated_delay = std::max((int64_t) 0, lock->m_segment_video_accumulated_delay - (frame->GetFrame()->pts - lock->m_video_pts) * delay_time_per_frame);
@@ -806,12 +775,6 @@ void Synchronizer::FlushAudioBuffer(Synchronizer::SharedData* lock, int64_t segm
 		}
 
 		int64_t samples_left = std::min(samples_max, (int64_t) lock->m_audio_buffer.GetSize() / m_output_format->m_audio_channels);
-
-		// add new block to sync diagram
-		if(m_sync_diagram != NULL && samples_left > 0) {
-			double t = (double) lock->m_audio_samples / (double) m_output_format->m_audio_sample_rate;
-			m_sync_diagram->AddBlock(3, t, t + (double) samples_left / (double) m_output_format->m_audio_sample_rate, QColor(0, 255, 0));
-		}
 
 		// send the samples to the encoder
 		while(samples_left > 0) {
@@ -900,15 +863,6 @@ void Synchronizer::SynchronizerThread() {
 			{
 				SharedLock lock(&m_shared_data);
 				FlushBuffers(lock.get());
-				if(m_sync_diagram != NULL) {
-					double time_in = (double) hrt_time_micro() * 1.0e-6;
-					double time_out = (double) GetTotalTime(lock.get()) * 1.0e-6;
-					m_sync_diagram->SetCurrentTime(0, time_in);
-					m_sync_diagram->SetCurrentTime(1, time_in);
-					m_sync_diagram->SetCurrentTime(2, time_out);
-					m_sync_diagram->SetCurrentTime(3, time_out);
-					m_sync_diagram->Update();
-				}
 			}
 
 			usleep(20000);

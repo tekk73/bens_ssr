@@ -37,25 +37,15 @@ PageWelcome::PageWelcome(MainWindow* main_window)
 		QLabel *label_logo = new QLabel(scrollarea_contents);
 		label_logo->setPixmap(QPixmap(":/header.png"));
 		label_logo->setScaledContents(true);
-		QLabel *label_welcome = new QLabel(scrollarea_contents);
-		label_welcome->setText(tr("<p>Welcome to SimpleScreenRecorder!</p>\n\n"
-								  "<p>Despite the name, this program actually has a lot of options. Don't worry though, there are really just two things that you "
-								  "need to know. One, the default settings are usually fine. If you don't know what something does, just use the default. "
-								  "Two, almost all settings have tooltips. Just hover the mouse over something to find out what it does.</p>\n\n"
-								  "<p>For more information:<br>\n"
-								  "%1</p>").arg("<a href=\"https://www.maartenbaert.be/simplescreenrecorder/\">https://www.maartenbaert.be/simplescreenrecorder/</a>"));
-		label_welcome->setWordWrap(true);
-		label_welcome->setTextFormat(Qt::RichText);
-		label_welcome->setTextInteractionFlags(Qt::TextBrowserInteraction);
-		label_welcome->setOpenExternalLinks(true);
-		QPushButton *button_about = new QPushButton(tr("About SimpleScreenRecorder"), scrollarea_contents);
-		m_checkbox_skip_page = new QCheckBox(tr("Skip this page next time"), scrollarea_contents);
-		m_checkbox_skip_page->setToolTip(tr("Go directly to the input page when the program is started."));
-
-		connect(button_about, SIGNAL(clicked()), this, SLOT(AboutDialog()));
+		QLabel *label_text = new QLabel(scrollarea_contents);
+		label_text->setText(tr("<p><b>bens_ssr</b> — Lighter fork of SimpleScreenRecorder</p>"
+							   "<p>X11 + PulseAudio capture with FFmpeg encoding, stripped of hotkeys, scheduler, systray, "
+							   "NVIDIA code and OpenGL recording.</p>"
+							   "<p><i>Original code by Maarten Baert</i></p>"));
+		label_text->setWordWrap(true);
+		label_text->setAlignment(Qt::AlignCenter);
 
 		QVBoxLayout *layout = new QVBoxLayout(scrollarea_contents);
-		//layout->setContentsMargins(0, 0, 0, 0);
 		{
 			QHBoxLayout *layout2 = new QHBoxLayout();
 			layout->addLayout(layout2);
@@ -63,14 +53,7 @@ PageWelcome::PageWelcome(MainWindow* main_window)
 			layout2->addWidget(label_logo);
 			layout2->addStretch();
 		}
-		layout->addWidget(label_welcome);
-		{
-			QHBoxLayout *layout2 = new QHBoxLayout();
-			layout->addLayout(layout2);
-			layout2->addWidget(button_about);
-			layout2->addStretch();
-		}
-		layout->addWidget(m_checkbox_skip_page);
+		layout->addWidget(label_text);
 		layout->addStretch();
 	}
 	QPushButton *button_continue = new QPushButton(g_icon_go_next, tr("Continue"), this);
@@ -92,57 +75,6 @@ PageWelcome::PageWelcome(MainWindow* main_window)
 }
 
 
-void PageWelcome::LoadSettings(QSettings* settings) {
-	SetSkipPage(settings->value("welcome/skip_page", false).toBool());
-}
 
-void PageWelcome::SaveSettings(QSettings* settings) {
-	settings->setValue("welcome/skip_page", GetSkipPage());
-}
 
-void PageWelcome::AboutDialog() {
-	DialogAbout dialog(this);
-	dialog.exec();
-}
 
-DialogAbout::DialogAbout(PageWelcome* parent)
-	: QDialog(parent) {
-
-	setWindowTitle(tr("About SimpleScreenRecorder"));
-
-	QString html_about;
-	{
-		QFile file(":/about.htm");
-		if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-			html_about = file.readAll();
-	}
-
-	html_about.replace("%MOREINFO%", tr("For more information:"));
-	html_about.replace("%SOURCECODE%", tr("The source code of this program can be found at:"));
-	html_about.replace("%USES%", tr("This program uses:"));
-	html_about.replace("%USES_QT%", tr("%1 for the graphical user interface").arg("<a href=\"https://qt-project.org/\">Qt</a>"));
-	html_about.replace("%USES_FFMPEG%", tr("%1 for video/audio encoding").arg("<a href=\"https://ffmpeg.org/\">FFmpeg</a>"));
-	html_about.replace("%USES_PLTHOOK%", tr("%1 for hooking system functions for OpenGL recording").arg("<a href=\"https://github.com/kubo/plthook\">PLTHook</a>"));
-	html_about.replace("%VERSION%", SSR_VERSION);
-	html_about.replace("%VERSIONINFO%", GetVersionInfo().replace("\n", "<br>\n"));
-
-	QTextBrowser *textbrowser = new QTextBrowser(this);
-	textbrowser->setHtml(html_about);
-	textbrowser->setOpenExternalLinks(true);
-	textbrowser->setMinimumSize(700, 500);
-
-	QPushButton *pushbutton_close = new QPushButton("Close", this);
-
-	connect(pushbutton_close, SIGNAL(clicked()), this, SLOT(accept()));
-
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	layout->addWidget(textbrowser);
-	{
-		QHBoxLayout *layout2 = new QHBoxLayout();
-		layout->addLayout(layout2);
-		layout2->addStretch();
-		layout2->addWidget(pushbutton_close);
-		layout2->addStretch();
-	}
-
-}

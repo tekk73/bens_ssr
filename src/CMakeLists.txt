@@ -63,8 +63,6 @@ set(sources
 	AV/Output/OutputManager.cpp
 	AV/Output/OutputManager.h
 	AV/Output/OutputSettings.h
-	AV/Output/SyncDiagram.cpp
-	AV/Output/SyncDiagram.h
 	AV/Output/Synchronizer.cpp
 	AV/Output/Synchronizer.h
 	AV/Output/VideoEncoder.cpp
@@ -86,8 +84,6 @@ set(sources
 	AV/FastScaler_Scale_Generic.cpp
 	AV/FastScaler_Scale_Generic.h
 	AV/SampleCast.h
-	AV/SimpleSynth.cpp
-	AV/SimpleSynth.h
 	AV/SourceSink.cpp
 	AV/SourceSink.h
 	common/CommandLineOptions.cpp
@@ -101,8 +97,6 @@ set(sources
 	common/Logger.cpp
 	common/Logger.h
 	common/MutexDataPair.h
-	common/NVidia.cpp
-	common/NVidia.h
 	common/QueueBuffer.h
 	common/ScreenScaling.cpp
 	common/ScreenScaling.h
@@ -111,14 +105,10 @@ set(sources
 	GUI/AudioPreviewer.h
 	GUI/DialogGLInject.cpp
 	GUI/DialogGLInject.h
-	GUI/DialogRecordSchedule.cpp
-	GUI/DialogRecordSchedule.h
 	GUI/ElidedLabel.cpp
 	GUI/ElidedLabel.h
 	GUI/HiddenScrollArea.cpp
 	GUI/HiddenScrollArea.h
-	GUI/HotkeyListener.h
-	GUI/HotkeyListener.cpp
 	GUI/Icons.cpp
 	GUI/Icons.h
 	GUI/MainWindow.cpp
@@ -139,8 +129,6 @@ set(sources
 	GUI/VideoPreviewer.h
 	GUI/WidgetRack.cpp
 	GUI/WidgetRack.h
-	Benchmark.cpp
-	Benchmark.h
 	Global.h
 	Main.cpp
 )

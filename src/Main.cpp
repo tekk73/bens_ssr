@@ -19,10 +19,8 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Global.h"
 
-#include "Benchmark.h"
 #include "CommandLineOptions.h"
 #include "CPUFeatures.h"
-#include "HotkeyListener.h"
 #include "Icons.h"
 #include "Logger.h"
 #include "MainWindow.h"
@@ -52,26 +50,6 @@ int main(int argc, char* argv[]) {
 	QCoreApplication::setOrganizationName("SimpleScreenRecorder");
 	QCoreApplication::setApplicationName("SimpleScreenRecorder");
 
-	// load Qt translations
-	QTranslator translator_qt;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	if(translator_qt.load(QLocale::system(), "qt", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
-		QApplication::installTranslator(&translator_qt);
-	}
-#else
-	if(translator_qt.load(QLocale::system(), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
-		QApplication::installTranslator(&translator_qt);
-	}
-#endif
-
-	// load SSR translations
-	QTranslator translator_ssr;
-	if(translator_ssr.load(QLocale::system(), "simplescreenrecorder", "_", QCoreApplication::applicationDirPath() + "/translations")) {
-		QApplication::installTranslator(&translator_ssr);
-	} else if(translator_ssr.load(QLocale::system(), "simplescreenrecorder", "_", GetApplicationSystemDir("translations"))) {
-		QApplication::installTranslator(&translator_ssr);
-	}
-
 	// Qt doesn't count hidden windows, so if the main window is hidden and a dialog box is closed, Qt thinks the application should quit.
 	// That's not what we want, so disable this and do it manually.
 	QApplication::setQuitOnLastWindowClosed(false);
@@ -89,7 +67,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// do we need to continue?
-	if(!CommandLineOptions::GetBenchmark() && !CommandLineOptions::GetGui()) {
+	if(!CommandLineOptions::GetGui()) {
 		return 0;
 	}
 
@@ -118,14 +96,7 @@ int main(int argc, char* argv[]) {
 
 	// start the program
 	int ret = 0;
-	if(CommandLineOptions::GetBenchmark()) {
-		Benchmark();
-	}
 	if(CommandLineOptions::GetGui()) {
-
-		// create hotkey listener
-		HotkeyListener hotkey_listener;
-		Q_UNUSED(hotkey_listener);
 
 		// create main window
 		MainWindow mainwindow;

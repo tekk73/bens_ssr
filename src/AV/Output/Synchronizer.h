@@ -31,8 +31,6 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 class OutputManager;
 class OutputSettings;
 class OutputFormat;
-class SyncDiagram;
-
 class Synchronizer : public VideoSink, public AudioSink {
 
 private:
@@ -99,8 +97,6 @@ private:
 	const OutputFormat *m_output_format;
 
 	int64_t m_max_frames_skipped;
-
-	std::unique_ptr<SyncDiagram> m_sync_diagram;
 
 	std::thread m_thread;
 	MutexDataPair<VideoData> m_video_data;
