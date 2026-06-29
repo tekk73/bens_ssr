@@ -19,7 +19,9 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "PageInput.h"
 
+#if SSR_USE_OPENGL_RECORDING
 #include "DialogGLInject.h"
+#endif
 #include "Dialogs.h"
 #include "EnumStrings.h"
 #include "Global.h"

@@ -42,7 +42,6 @@ along with SimpleScreenRecorder.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QShortcut>
-#include <QSystemTrayIcon>
 
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -195,34 +194,9 @@ extern "C" {
 #error SSR_USE_FFMPEG_VERSIONS should be defined!
 #endif
 
-// Whether the JACK metadata API should be used. Does not work with really old JACK versions.
-#ifndef SSR_USE_JACK_METADATA
-#error SSR_USE_JACK_METADATA should be defined!
-#endif
-
-// Whether OpenGL recording should be used.
-#ifndef SSR_USE_OPENGL_RECORDING
-#error SSR_USE_OPENGL_RECORDING should be defined!
-#endif
-
-// Whether V4L2 should be used.
-#ifndef SSR_USE_V4L2
-#error SSR_USE_V4L2 should be defined!
-#endif
-
-// Whether ALSA should be used.
-#ifndef SSR_USE_ALSA
-#error SSR_USE_ALSA should be defined!
-#endif
-
 // Whether PulseAudio should be used.
 #ifndef SSR_USE_PULSEAUDIO
 #error SSR_USE_PULSEAUDIO should be defined!
-#endif
-
-// Whether JACK should be used.
-#ifndef SSR_USE_JACK
-#error SSR_USE_JACK should be defined!
 #endif
 
 // Path to system-wide application directory (usually /usr/share/simplescreenrecorder).
@@ -366,58 +340,18 @@ public:
 		return "X11Exception";
 	}
 };
-class GLInjectException : public std::exception {
-public:
-	inline virtual const char* what() const throw() override {
-		return "GLInjectException";
-	}
-};
 class SSRStreamException : public std::exception {
 public:
 	inline virtual const char* what() const throw() override {
 		return "SSRStreamException";
 	}
 };
-#if SSR_USE_V4L2
-class V4L2Exception : public std::exception {
-public:
-	inline virtual const char* what() const throw() override {
-		return "V4L2Exception";
-	}
-};
-#endif
-#if SSR_USE_PIPEWIRE
-class PipeWireException : public std::exception {
-public:
-	inline virtual const char* what() const throw() override {
-		return "PipeWireException";
-	}
-};
-#endif
-#if SSR_USE_ALSA
-class ALSAException : public std::exception {
-public:
-	inline virtual const char* what() const throw() override {
-		return "ALSAException";
-	}
-};
-#endif
-#if SSR_USE_PULSEAUDIO
 class PulseAudioException : public std::exception {
 public:
 	inline virtual const char* what() const throw() override {
 		return "PulseAudioException";
 	}
 };
-#endif
-#if SSR_USE_JACK
-class JACKException : public std::exception {
-public:
-	inline virtual const char* what() const throw() override {
-		return "JACKException";
-	}
-};
-#endif
 
 // simple function to do 16-byte alignment
 inline size_t grow_align16(size_t size) {

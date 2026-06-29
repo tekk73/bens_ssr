@@ -15,58 +15,17 @@ else()
 	set(PROCESSOR_IS_X86 FALSE)
 endif()
 
-option(ENABLE_32BIT_GLINJECT "Build the 32-bit version of 'libssr-glinject' on 64-bit systems (in addition to the 64-bit version). Required for OpenGL recording of 32-bit applications on 64-bit systems." FALSE)
 option(ENABLE_X86_ASM "Allow x86/x64 assembly or intrinsics." ${PROCESSOR_IS_X86})
 option(ENABLE_FFMPEG_VERSIONS "Use FFmpeg version numbers for feature support tests. Enable when using FFmpeg, disable when using Libav." TRUE)
-option(ENABLE_JACK_METADATA "Use the JACK metadata API. May not work with very old JACK versions." TRUE)
-option(WITH_OPENGL_RECORDING "Build with OpenGL recording support." TRUE)
-option(WITH_V4L2 "Build with V4L2 support." TRUE)
-option(WITH_PIPEWIRE "Build with PipeWire support." TRUE)
-option(WITH_ALSA "Build with ALSA support." TRUE)
 option(WITH_PULSEAUDIO "Build with PulseAudio support." TRUE)
-option(WITH_JACK "Build with JACK support." TRUE)
 option(WITH_QT5 "Build with Qt5 (instead of Qt4)." FALSE)
 option(WITH_QT6 "Build with Qt6 (instead of Qt4/5)." FALSE)
 option(WITH_SIMPLESCREENRECORDER "Build the 'simplescreenrecorder' executable." TRUE)
-option(WITH_GLINJECT "Build the 'libssr-glinject' library. Required for OpenGL recording." TRUE)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 include(FeatureSummary)
 include(GNUInstallDirs)
-
-# try to guess the correct 32-bit library path on 64-bit systems
-if(ENABLE_32BIT_GLINJECT)
-
-	if(NOT DEFINED CMAKE_INSTALL_LIB32DIR)
-		set(_LIB32DIR_DEFAULT "lib32")
-		if(EXISTS "/etc/debian_version")
-			if(EXISTS "/usr/lib/i386-linux-gnu")
-				set(_LIB32DIR_DEFAULT "lib/i386-linux-gnu")
-			elseif(EXISTS "/usr/lib/i686-linux-gnu")
-				set(_LIB32DIR_DEFAULT "lib/i686-linux-gnu")
-			else()
-				message(WARNING "Could not find correct multiarch 32-bit library path, falling back to 'lib32'.")
-			endif()
-		endif()
-		set(CMAKE_INSTALL_LIB32DIR "${_LIB32DIR_DEFAULT}" CACHE PATH "object code libraries, 32-bit (${_LIB32DIR_DEFAULT})")
-	endif()
-	
-	mark_as_advanced(CMAKE_INSTALL_LIB32DIR)
-
-	if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_LIB32DIR})
-		set(CMAKE_INSTALL_FULL_LIB32DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIB32DIR}")
-	else()
-		set(CMAKE_INSTALL_FULL_LIB32DIR "${CMAKE_INSTALL_LIB32DIR}")
-	endif()
-
-endif()
-
-if(WITH_GLINJECT)
-
-	add_subdirectory(glinject)
-
-endif()
 
 if(WITH_SIMPLESCREENRECORDER)
 

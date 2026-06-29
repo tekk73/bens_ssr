@@ -9,21 +9,8 @@ find_package(AVUtil REQUIRED)
 find_package(SWScale REQUIRED)
 find_package(X11 REQUIRED)
 
-if(WITH_V4L2)
-	find_package(V4L2 REQUIRED)
-endif()
-if(WITH_PIPEWIRE)
-	find_package(PipeWire REQUIRED)
-	find_package(SPA REQUIRED)
-endif()
-if(WITH_ALSA)
-	find_package(ALSA REQUIRED)
-endif()
 if(WITH_PULSEAUDIO)
 	find_package(PulseAudio REQUIRED)
-endif()
-if(WITH_JACK)
-	find_package(Jack REQUIRED)
 endif()
 
 if(WITH_QT6)
@@ -35,23 +22,8 @@ else()
 endif()
 
 set(sources
-	AV/Input/ALSAInput.cpp
-	AV/Input/ALSAInput.h
-	AV/Input/GLInjectInput.cpp
-	AV/Input/GLInjectInput.h
-	AV/Input/JACKInput.cpp
-	AV/Input/JACKInput.h
-	AV/Input/PipeWireInput.cpp
-	AV/Input/PipeWireInput.h
 	AV/Input/PulseAudioInput.cpp
 	AV/Input/PulseAudioInput.h
-	AV/Input/SSRVideoStream.h
-	AV/Input/SSRVideoStreamReader.cpp
-	AV/Input/SSRVideoStreamReader.h
-	AV/Input/SSRVideoStreamWatcher.cpp
-	AV/Input/SSRVideoStreamWatcher.h
-	AV/Input/V4L2Input.cpp
-	AV/Input/V4L2Input.h
 	AV/Input/X11Input.cpp
 	AV/Input/X11Input.h
 	AV/Output/AudioEncoder.cpp
@@ -103,8 +75,6 @@ set(sources
 	common/TempBuffer.h
 	GUI/AudioPreviewer.cpp
 	GUI/AudioPreviewer.h
-	GUI/DialogGLInject.cpp
-	GUI/DialogGLInject.h
 	GUI/ElidedLabel.cpp
 	GUI/ElidedLabel.h
 	GUI/HiddenScrollArea.cpp
@@ -197,12 +167,7 @@ target_include_directories(simplescreenrecorder PRIVATE
 	${X11_Xfixes_INCLUDE_PATH}
 	${X11_Xi_INCLUDE_PATH}
 	${X11_Xinerama_INCLUDE_PATH}
-	$<$<BOOL:${WITH_V4L2}>:${V4L2_INCLUDE_DIRS}>
-	$<$<BOOL:${WITH_PIPEWIRE}>:${PIPEWIRE_INCLUDE_DIRS}>
-	$<$<BOOL:${WITH_PIPEWIRE}>:${SPA_INCLUDE_DIRS}>
-	$<$<BOOL:${WITH_ALSA}>:${ALSA_INCLUDE_DIRS}>
 	$<$<BOOL:${WITH_PULSEAUDIO}>:${PULSEAUDIO_INCLUDE_DIRS}>
-	$<$<BOOL:${WITH_JACK}>:${JACK_INCLUDE_DIRS}>
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/AV
 	${CMAKE_CURRENT_SOURCE_DIR}/AV/Input
@@ -223,23 +188,13 @@ target_link_libraries(simplescreenrecorder PRIVATE
 	${X11_Xfixes_LIB}
 	${X11_Xi_LIB}
 	${X11_Xinerama_LIB}
-	$<$<BOOL:${WITH_V4L2}>:${V4L2_LIBRARIES}>
-	$<$<BOOL:${WITH_PIPEWIRE}>:${PIPEWIRE_LIBRARIES}>
-	$<$<BOOL:${WITH_ALSA}>:${ALSA_LIBRARIES}>
 	$<$<BOOL:${WITH_PULSEAUDIO}>:${PULSEAUDIO_LIBRARIES}>
-	$<$<BOOL:${WITH_JACK}>:${JACK_LIBRARIES}>
 )
 
 target_compile_definitions(simplescreenrecorder PRIVATE
 	-DSSR_USE_X86_ASM=$<BOOL:${ENABLE_X86_ASM}>
 	-DSSR_USE_FFMPEG_VERSIONS=$<BOOL:${ENABLE_FFMPEG_VERSIONS}>
-	-DSSR_USE_JACK_METADATA=$<BOOL:${ENABLE_JACK_METADATA}>
-	-DSSR_USE_OPENGL_RECORDING=$<BOOL:${WITH_OPENGL_RECORDING}>
-	-DSSR_USE_V4L2=$<BOOL:${WITH_V4L2}>
-	-DSSR_USE_PIPEWIRE=$<BOOL:${WITH_PIPEWIRE}>
-	-DSSR_USE_ALSA=$<BOOL:${WITH_ALSA}>
 	-DSSR_USE_PULSEAUDIO=$<BOOL:${WITH_PULSEAUDIO}>
-	-DSSR_USE_JACK=$<BOOL:${WITH_JACK}>
 	-DSSR_SYSTEM_DIR="${CMAKE_INSTALL_FULL_DATADIR}/simplescreenrecorder"
 	-DSSR_VERSION="${PROJECT_VERSION}"
 )

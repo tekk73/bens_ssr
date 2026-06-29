@@ -1,15 +1,14 @@
 .TH SIMPLESCREENRECORDER "1" "May 2020" "SimpleScreenRecorder" "SimpleScreenRecorder Manual"
 .SH NAME
-simplescreenrecorder \- A feature-rich screen recorder that supports X11 and OpenGL.
+simplescreenrecorder \- A feature-rich screen recorder that supports X11.
 .SH SYNOPSIS
 .B simplescreenrecorder
 [\fI\,OPTIONS\/\fR]
 .SH DESCRIPTION
-SimpleScreenRecorder is a feature-rich screen recorder that supports X11 and
-OpenGL. It has a Qt-based graphical user interface. It can record the entire
-screen or part of it, or record OpenGL applications directly. The recording
-can be paused and resumed at any time. Many different file formats and codecs
-are supported.
+SimpleScreenRecorder is a feature-rich screen recorder that supports X11.
+It has a Qt-based graphical user interface. It can record the entire
+screen or part of it. The recording can be paused and resumed at any
+time. Many different file formats and codecs are supported.
 .SH OPTIONS
 .TP
 \fB\-\-help\fR
@@ -32,23 +31,8 @@ Write recording statistics to \fI\,FILE\/\fR. If \fI\,FILE\/\fR is omitted,
 be updated continuously and deleted when the recording
 page is closed.
 .TP
-\fB\-\-no\-systray\fR
-Don't show the system tray icon.
-.TP
-\fB\-\-start\-hidden\fR
-Start the application in hidden form.
-.TP
 \fB\-\-start\-recording\fR
 Start the recording immediately.
-.TP
-\fB\-\-activate\-schedule\fR
-Activate the recording schedule immediately.
-.TP
-\fB\-\-syncdiagram\fR
-Show synchronization diagram (for debugging).
-.TP
-\fB\-\-benchmark\fR
-Run the internal benchmark.
 .SH "COMMANDS ACCEPTED THROUGH STDIN"
 .TP
 \fBrecord-start\fR
@@ -62,12 +46,6 @@ Cancel the recording and delete the output file.
 .TP
 \fBrecord-save\fR
 Finish the recording and save the output file.
-.TP
-\fBschedule-activate\fR
-Activate the recording schedule.
-.TP
-\fBschedule-deactivate\fR
-Deactivate the recording schedule.
 .TP
 \fBwindow-show\fR
 Show the application window.
@@ -102,11 +80,6 @@ Output profiles:
 /usr/share/simplescreenrecorder/output-profiles/
 .br
 ~/.ssr/output-profiles/
-.RE
-.PP
-Translations:
-.RS
-/usr/share/simplescreenrecorder/translations/
 .RE
 .SH "SEE ALSO"
 More documentation can be found at:

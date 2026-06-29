@@ -5,25 +5,25 @@ This is a personal fork of [SimpleScreenRecorder](https://www.maartenbaert.be/si
 by [Maarten Baert](https://github.com/MaartenBaert/ssr). All credit for the original
 program goes to him.
 
-### Why this fork exists
+### What's different
 
-I wanted a lighter, simpler version of SSR for my own use. This fork strips out:
+This fork strips out the following features from upstream SSR:
 
-- **Scheduler / timed recording** — removed `DialogRecordSchedule`
-- **Hotkeys** — removed `HotkeyListener` (XInput2 dependency dropped)
-- **System tray icon** — no more `QSystemTrayIcon`
-- **Sound notifications** — removed `SimpleSynth` (ALSA synth for record start/stop beeps)
-- **Benchmark mode** — removed `Benchmark`
-- **NVIDIA driver flipping** — removed NVidia control code
-- **Cursor-follow / follow-fullscreen** — X11 area GUI options removed (engine still captures full screen or fixed area)
-- **SyncDiagram** — debug visualization of Synchronizer drift removed
-- **Translations** — all `.ts` files removed
-- **OpenGL recording / GLInject** — disabled at build time
-- **Non-PulseAudio backends** — ALSA, JACK, PipeWire disabled at build time
-- **Maarten's welcome text** — replaced with just the logo
-- **Dark theme** — applied program-wide for instant visual distinction
+- Scheduler / timed recording
+- Hotkeys (XInput2 dependency dropped)
+- System tray icon
+- Sound notifications (ALSA synth beeps)
+- Benchmark mode
+- NVIDIA driver flipping
+- Cursor-follow / follow-fullscreen (GUI options removed — engine still captures full screen or fixed area)
+- SyncDiagram (Synchronizer debug visualization)
+- Translations (`.ts` / `.qm` files and infrastructure)
+- OpenGL recording / GLInject (fully removed, including the GLInject library, shared-memory stream protocol, `DialogGLInject`, and `GLInjectInput`)
+- ALSA, JACK, PipeWire, V4L2 backends (fully removed — only PulseAudio remains)
+- Maarten's welcome text (replaced with just the logo)
+- Dark theme applied program-wide
 
-### What's kept intact
+### What's kept
 
 - **X11 screen capture** (with cursor, fixed-area recording)
 - **PulseAudio audio capture**
@@ -38,9 +38,6 @@ I wanted a lighter, simpler version of SSR for my own use. This fork strips out:
 ```bash
 mkdir build && cd build
 cmake -DWITH_QT5=TRUE -DWITH_PULSEAUDIO=TRUE \
-      -DWITH_ALSA=FALSE -DWITH_JACK=FALSE \
-      -DWITH_OPENGL_RECORDING=FALSE -DWITH_GLINJECT=FALSE \
-      -DWITH_V4L2=FALSE -DWITH_PIPEWIRE=FALSE \
       -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
 ```
