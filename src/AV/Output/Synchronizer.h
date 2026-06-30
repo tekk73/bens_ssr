@@ -97,6 +97,7 @@ private:
 	const OutputFormat *m_output_format;
 
 	int64_t m_max_frames_skipped;
+	float m_audio_gain;
 
 	std::thread m_thread;
 	MutexDataPair<VideoData> m_video_data;

@@ -250,10 +250,11 @@ void Synchronizer::Init() {
 	// initialize audio
 	if(m_output_format->m_audio_enabled) {
 		AudioLock audiolock(&m_audio_data);
-		audiolock->m_fast_resampler.reset(new FastResampler(m_output_format->m_audio_channels, 0.9f));
+		audiolock->m_fast_resampler.reset(new FastResampler(m_output_format->m_audio_channels, 1.0f));
 		InitAudioSegment(audiolock.get());
 		audiolock->m_warn_desync = true;
 	}
+	m_audio_gain = m_output_settings->audio_gain;
 
 	// initialize shared data
 	{
@@ -803,6 +804,17 @@ void Synchronizer::FlushAudioBuffer(Synchronizer::SharedData* lock, int64_t segm
 				std::unique_ptr<AVFrameWrapper> audio_frame = CreateAudioFrame(m_output_format->m_audio_channels, m_output_format->m_audio_sample_rate,
 																			   m_output_format->m_audio_frame_size, planes, m_output_format->m_audio_sample_format);
 				audio_frame->GetFrame()->pts = lock->m_audio_samples;
+
+				// apply audio gain (with hard clipping to prevent distortion)
+				if(m_audio_gain != 1.0f) {
+					float *gdata = (float*) lock->m_partial_audio_frame.GetData();
+					for(unsigned int i = 0; i < m_output_format->m_audio_frame_size * m_output_format->m_audio_channels; ++i) {
+						float s = gdata[i] * m_audio_gain;
+						if(s > 1.0f) s = 1.0f;
+						else if(s < -1.0f) s = -1.0f;
+						gdata[i] = s;
+					}
+				}
 
 				// copy/convert the samples
 				switch(m_output_format->m_audio_sample_format) {

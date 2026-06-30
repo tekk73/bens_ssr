@@ -355,8 +355,19 @@ PageOutput::PageOutput(MainWindow* main_window)
 			m_label_audio_options = new QLabel(tr("Custom options:"), m_groupbox_audio);
 			m_lineedit_audio_options = new QLineEdit(m_groupbox_audio);
 			m_lineedit_audio_options->setToolTip(tr("Custom codec options separated by commas (e.g. option1=value1,option2=value2,option3=value3)"));
+			m_label_audio_gain = new QLabel(tr("Audio gain:"), m_groupbox_audio);
+			m_slider_audio_gain = new QSlider(Qt::Horizontal, m_groupbox_audio);
+			m_slider_audio_gain->setRange(0, 50);
+			m_slider_audio_gain->setSingleStep(1);
+			m_slider_audio_gain->setPageStep(5);
+			m_slider_audio_gain->setToolTip(tr("Multiplier applied to audio samples before encoding. Use values > 1.0 to boost quiet recordings."));
+			m_label_audio_gain_value = new QLabel(m_groupbox_audio);
+			m_label_audio_gain_value->setNum(1.0);
+			m_label_audio_gain_value->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+			m_label_audio_gain_value->setMinimumWidth(GetTextWidth(m_label_audio_gain_value->font(), "5.0") + 2);
 
 			connect(m_combobox_audio_codec, SIGNAL(activated(int)), this, SLOT(OnUpdateAudioCodecFields()));
+			connect(m_slider_audio_gain, SIGNAL(valueChanged(int)), this, SLOT(OnUpdateAudioGainLabel()));
 
 			QGridLayout *layout = new QGridLayout(m_groupbox_audio);
 			layout->addWidget(label_audio_codec, 0, 0);
@@ -365,8 +376,11 @@ PageOutput::PageOutput(MainWindow* main_window)
 			layout->addWidget(m_combobox_audio_codec_av, 1, 1);
 			layout->addWidget(m_label_audio_kbit_rate, 2, 0);
 			layout->addWidget(m_lineedit_audio_kbit_rate, 2, 1);
-			layout->addWidget(m_label_audio_options, 3, 0);
-			layout->addWidget(m_lineedit_audio_options, 3, 1);
+			layout->addWidget(m_label_audio_gain, 3, 0);
+			layout->addWidget(m_slider_audio_gain, 3, 1);
+			layout->addWidget(m_label_audio_gain_value, 3, 2);
+			layout->addWidget(m_label_audio_options, 4, 0);
+			layout->addWidget(m_lineedit_audio_options, 4, 1);
 		}
 
 		QVBoxLayout *layout = new QVBoxLayout(scrollarea_contents);
@@ -482,6 +496,7 @@ void PageOutput::LoadProfileSettings(QSettings* settings) {
 	SetAudioCodec(StringToEnum(settings->value("output/audio_codec", QString()).toString(), default_audio_codec));
 	SetAudioCodecAV(FindAudioCodecAV(settings->value("output/audio_codec_av", QString()).toString()));
 	SetAudioKBitRate(settings->value("output/audio_kbit_rate", 128).toUInt());
+	SetAudioGain(settings->value("output/audio_gain", 1.0).toFloat());
 	SetAudioOptions(settings->value("output/audio_options", "").toString());
 
 	// update things
@@ -511,6 +526,7 @@ void PageOutput::SaveProfileSettings(QSettings* settings) {
 	settings->setValue("output/audio_codec", EnumToString(GetAudioCodec()));
 	settings->setValue("output/audio_codec_av", m_audio_codecs_av[GetAudioCodecAV()].avname);
 	settings->setValue("output/audio_kbit_rate", GetAudioKBitRate());
+	settings->setValue("output/audio_gain", GetAudioGain());
 	settings->setValue("output/audio_options", GetAudioOptions());
 
 }
@@ -678,6 +694,10 @@ void PageOutput::OnUpdateAudioCodecFields() {
 		{{m_label_audio_kbit_rate, m_lineedit_audio_kbit_rate}, (codec != AUDIO_CODEC_UNCOMPRESSED)},
 		{{m_label_audio_codec_av, m_combobox_audio_codec_av, m_label_audio_options, m_lineedit_audio_options}, (codec == AUDIO_CODEC_OTHER)},
 	});
+}
+
+void PageOutput::OnUpdateAudioGainLabel() {
+	m_label_audio_gain_value->setText(QString::number(m_slider_audio_gain->value() / 10.0, 'f', 1));
 }
 
 void PageOutput::OnBrowse() {

@@ -36,6 +36,7 @@ struct OutputSettings {
 	unsigned int audio_kbit_rate;
 	std::vector<std::pair<QString, QString> > audio_options;
 	unsigned int audio_channels, audio_sample_rate;
+	float audio_gain = 1.0f;
 
 };
 

@@ -458,6 +458,7 @@ void PageRecord::StartPage() {
 	m_output_settings.audio_options.clear();
 	m_output_settings.audio_channels = m_audio_channels;
 	m_output_settings.audio_sample_rate = m_audio_sample_rate;
+	m_output_settings.audio_gain = page_output->GetAudioGain();
 
 	// some codec-specific things
 	// you can get more information about all these options by running 'ffmpeg -h' or 'avconv -h' from a terminal

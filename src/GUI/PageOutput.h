@@ -129,6 +129,9 @@ private:
 	QLineEdit *m_lineedit_audio_kbit_rate;
 	QLabel *m_label_audio_options;
 	QLineEdit *m_lineedit_audio_options;
+	QLabel *m_label_audio_gain;
+	QSlider *m_slider_audio_gain;
+	QLabel *m_label_audio_gain_value;
 
 public:
 	PageOutput(MainWindow* main_window);
@@ -168,6 +171,7 @@ public slots:
 	void OnUpdateAudioCodecFields();
 
 private slots:
+	void OnUpdateAudioGainLabel();
 	void OnBrowse();
 	void OnContinue();
 
@@ -209,5 +213,7 @@ public:
 	inline void SetAudioCodecAV(unsigned int audio_codec_av) { m_combobox_audio_codec_av->setCurrentIndex(clamp(audio_codec_av, 0u, (unsigned int) m_audio_codecs_av.size() - 1)); }
 	inline void SetAudioKBitRate(unsigned int kbit_rate) { m_lineedit_audio_kbit_rate->setText(QString::number(kbit_rate)); }
 	inline void SetAudioOptions(const QString& options) { m_lineedit_audio_options->setText(options); }
+	inline float GetAudioGain() { return m_slider_audio_gain->value() / 10.0f; }
+	inline void SetAudioGain(float gain) { m_slider_audio_gain->setValue((int)(gain * 10.0f + 0.5f)); m_label_audio_gain_value->setNum(gain); }
 
 };
